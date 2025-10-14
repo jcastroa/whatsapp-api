@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  mariadb:
+    image: mariadb:10.11
+    container_name: whatsapp_db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: whatsapp_api
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - whatsapp_network
+
+  whatsapp_api:
+    build: .
+    container_name: whatsapp_api
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=mariadb
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=whatsapp_api
+      - API_KEY=${API_KEY}
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./sessions:/app/sessions
+    depends_on:
+      - mariadb
+    restart: unless-stopped
+    networks:
+      - whatsapp_network
+
+volumes:
+  mariadb_data:
+
+networks:
+  whatsapp_network:
+    driver: bridge
