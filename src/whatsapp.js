@@ -416,7 +416,7 @@ async function sendMessage(instanceId, phone, text, base64Image = null) {
         await pool.query(
             `INSERT INTO messages (instance_id, to_number, message_text, message_type, message_id, webhook_sent) 
        VALUES (?, ?, ?, ?, ?, ?)`,
-            [instanceId, phone, text, mediaUrl ? 'image' : 'text', sentMsg.key.id, true]
+            [instanceId, phone, text, base64Image ? 'image' : 'text', sentMsg.key.id, true]
         );
 
         console.log(`📤 Message sent from ${instanceId} to ${phone}`);
