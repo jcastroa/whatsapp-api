@@ -37,8 +37,8 @@ async function initDatabase() {
       CREATE TABLE IF NOT EXISTS messages (
         id INT AUTO_INCREMENT PRIMARY KEY,
         instance_id VARCHAR(255),
-        from_number VARCHAR(20),
-        to_number VARCHAR(20),
+        from_number VARCHAR(50),
+        to_number VARCHAR(50),
         message_text TEXT,
         message_type VARCHAR(50) DEFAULT 'text',
         message_id VARCHAR(255),
