@@ -268,10 +268,10 @@ app.put('/api/instance/:instanceId/webhook', authMiddleware, async (req, res) =>
  *                 type: string
  *                 example: Hola! Tu cita está confirmada para mañana a las 3pm
  *                 description: Texto del mensaje
- *               mediaUrl:
+ *               base64Image:
  *                 type: string
- *                 example: https://example.com/image.jpg
- *                 description: URL de imagen (opcional)
+ *                 example: data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ...
+ *                 description: Imagen en base64 (opcional)
  *     responses:
  *       200:
  *         description: Mensaje enviado exitosamente
@@ -295,13 +295,13 @@ app.put('/api/instance/:instanceId/webhook', authMiddleware, async (req, res) =>
  */
 app.post('/api/message/send', authMiddleware, async (req, res) => {
   try {
-    const { instanceId, phone, text, mediaUrl } = req.body;
+    const { instanceId, phone, text, base64Image } = req.body;
     
     if (!instanceId || !phone || !text) {
       return res.status(400).json({ error: 'instanceId, phone, and text required' });
     }
 
-    const result = await sendMessage(instanceId, phone, text, mediaUrl);
+    const result = await sendMessage(instanceId, phone, text, base64Image);
     res.json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });

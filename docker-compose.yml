@@ -27,7 +27,7 @@ services:
       - DB_NAME=whatsapp_api
       - API_KEY=${API_KEY}
     ports:
-      - "3000:3000"
+      - "8096:3000"
     volumes:
       - ./sessions:/app/sessions
     depends_on:

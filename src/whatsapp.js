@@ -379,9 +379,9 @@ async function sendWebhook(instanceId, payload, webhookUrl = null, webhookToken 
  * @param {string} instanceId - ID de la instancia
  * @param {string} phone - Número de teléfono
  * @param {string} text - Texto del mensaje
- * @param {string} mediaUrl - URL de imagen/video (opcional)
+ * @param {string} base64Image - Imagen en base64 (opcional)
  */
-async function sendMessage(instanceId, phone, text, mediaUrl = null) {
+async function sendMessage(instanceId, phone, text, base64Image = null) {
     try {
         const sock = instances.get(instanceId);
 
@@ -394,10 +394,17 @@ async function sendMessage(instanceId, phone, text, mediaUrl = null) {
 
         let sentMsg;
 
-        if (mediaUrl) {
-            // Enviar con media (imagen)
+        if (base64Image) {
+            
+            // Asegurarnos de quitar el encabezado si viene en formato data:image/jpeg;base64,...
+            const base64Data = base64Image.split(',')[1] || base64Image;
+
+            // Convertir a Buffer
+            const buffer = Buffer.from(base64Data, 'base64');
+
+            // Enviar imagen
             sentMsg = await sock.sendMessage(jid, {
-                image: { url: mediaUrl },
+                image: buffer,
                 caption: text
             });
         } else {
