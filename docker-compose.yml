@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   mariadb:
-    image: mariadb:10.11
+    image: mariadb:11.4
     container_name: whatsapp_db
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
