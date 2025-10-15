@@ -6,7 +6,7 @@ const options = {
     info: {
       title: 'WhatsApp API',
       version: '1.0.0',
-      description: 'API para gestionar instancias de WhatsApp con Baileys',
+      description: 'API para gestionar instancias de WhatsApp',
       contact: {
         name: 'API Support',
         email: 'support@tudominio.com'
@@ -14,7 +14,7 @@ const options = {
     },
     servers: [
       {
-        url: 'http://200.58.103.40:8096',
+        url: 'https://whatsapp.cita247.com',
         description: 'Servidor de desarrollo'
       }
     ],
@@ -73,7 +73,7 @@ const options = {
             },
             webhook_url: {
               type: 'string',
-              example: 'https://tu-fastapi.com/webhook/whatsapp'
+              example: 'https://dominio.com/webhook'
             }
           }
         }
