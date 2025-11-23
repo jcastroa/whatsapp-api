@@ -46,6 +46,7 @@ services:
     restart: unless-stopped
     networks:
       - whatsapp_network
+      - api-nebula_default
 
 volumes:
   mariadb_data:
@@ -53,3 +54,5 @@ volumes:
 networks:
   whatsapp_network:
     driver: bridge
+  api-nebula_default:
+    external: true
