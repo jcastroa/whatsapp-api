@@ -4,9 +4,9 @@ const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'WhatsApp API',
-      version: '1.0.0',
-      description: 'API para gestionar instancias de WhatsApp',
+      title: 'WhatsApp Meta API',
+      version: '2.0.0',
+      description: 'API para enviar mensajes via WhatsApp Business Cloud API de Meta',
       contact: {
         name: 'API Support',
         email: 'support@tudominio.com'
@@ -15,7 +15,7 @@ const options = {
     servers: [
       {
         url: 'https://whatsapp.cita247.com',
-        description: 'Servidor de desarrollo'
+        description: 'Servidor de produccion'
       }
     ],
     components: {
@@ -24,7 +24,7 @@ const options = {
           type: 'apiKey',
           in: 'header',
           name: 'X-API-Key',
-          description: 'API Key para autenticación'
+          description: 'API Key para autenticacion'
         }
       },
       schemas: {
@@ -49,31 +49,31 @@ const options = {
         Instance: {
           type: 'object',
           properties: {
-            id: {
+            phone_number_id: {
               type: 'string',
-              example: 'cliente_salon_maria'
+              example: '941109455742800'
             },
-            client_name: {
+            display_phone_number: {
               type: 'string',
-              example: 'Salón María'
+              example: '+51 969 558 720'
             },
-            phone_number: {
+            verified_name: {
               type: 'string',
-              example: '5491112345678'
+              example: 'Mi Negocio'
             },
-            status: {
+            quality_rating: {
               type: 'string',
-              enum: ['connecting', 'connected', 'disconnected'],
-              example: 'connected'
+              example: 'GREEN'
             },
-            qr_code: {
+            estado: {
               type: 'string',
-              nullable: true,
-              example: 'data:image/png;base64,...'
+              enum: ['activo', 'inactivo', 'suspendido', 'desvinculado'],
+              example: 'activo'
             },
-            webhook_url: {
+            token_expires: {
               type: 'string',
-              example: 'https://dominio.com/webhook'
+              format: 'date-time',
+              example: '2024-02-15T00:00:00.000Z'
             }
           }
         }
@@ -85,7 +85,7 @@ const options = {
       }
     ]
   },
-  apis: ['./src/server.js'] // Ruta donde están los comentarios de Swagger
+  apis: ['./src/server.js']
 };
 
 const swaggerSpec = swaggerJsdoc(options);
