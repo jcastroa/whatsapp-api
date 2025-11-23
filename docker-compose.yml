@@ -21,11 +21,22 @@ services:
     container_name: whatsapp_api
     environment:
       - NODE_ENV=production
+      # Local DB for message_logs
       - DB_HOST=mariadb
+      - DB_PORT=3306
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=whatsapp_api
+      # External DB for whatsapp_instancias
+      - DB_INSTANCIAS_HOST=${DB_INSTANCIAS_HOST}
+      - DB_INSTANCIAS_PORT=${DB_INSTANCIAS_PORT}
+      - DB_INSTANCIAS_USER=${DB_INSTANCIAS_USER}
+      - DB_INSTANCIAS_PASSWORD=${DB_INSTANCIAS_PASSWORD}
+      - DB_INSTANCIAS_NAME=${DB_INSTANCIAS_NAME}
+      # API Config
       - API_KEY=${API_KEY}
+      - META_API_VERSION=${META_API_VERSION}
+      - META_API_BASE_URL=${META_API_BASE_URL}
     ports:
       - "8096:3000"
     volumes:
