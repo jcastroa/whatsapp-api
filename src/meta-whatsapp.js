@@ -1,4 +1,4 @@
-const { pool } = require('./database');
+const { poolInstancias } = require('./database');
 const FormData = require('form-data');
 
 const META_API_VERSION = process.env.META_API_VERSION || 'v20.0';
@@ -10,7 +10,7 @@ const META_API_BASE_URL = process.env.META_API_BASE_URL || 'https://graph.facebo
  * @returns {Promise<Object>} Datos de la instancia incluyendo access_token
  */
 async function getInstance(phoneNumberId) {
-  const [rows] = await pool.query(
+  const [rows] = await poolInstancias.query(
     `SELECT id, negocio_id, waba_id, phone_number_id, business_account_id,
             access_token, token_expira_en, display_phone_number, phone_number,
             verified_name, quality_rating, waba_name, estado

@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swagger');
-const { initDatabase, pool } = require('./database');
+const { initDatabase, pool, poolInstancias } = require('./database');
 const { sendMessage } = require('./meta-whatsapp');
 
 const app = express();
@@ -253,7 +253,7 @@ app.get('/api/instance/:phoneNumberId/status', authMiddleware, async (req, res) 
   try {
     const { phoneNumberId } = req.params;
 
-    const [rows] = await pool.query(
+    const [rows] = await poolInstancias.query(
       `SELECT phone_number_id, display_phone_number, phone_number, verified_name,
               quality_rating, waba_name, estado, token_expira_en, fecha_creacion
        FROM whatsapp_instancias

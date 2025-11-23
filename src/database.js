@@ -1,5 +1,6 @@
 const mysql = require('mysql2/promise');
 
+// Pool para message_logs (local)
 const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
   port: process.env.DB_PORT || 3306,
@@ -11,65 +12,35 @@ const pool = mysql.createPool({
   queueLimit: 0
 });
 
-// Crear tablas si no existen
+// Pool para whatsapp_instancias (external)
+const poolInstancias = mysql.createPool({
+  host: process.env.DB_INSTANCIAS_HOST || 'localhost',
+  port: process.env.DB_INSTANCIAS_PORT || 3306,
+  user: process.env.DB_INSTANCIAS_USER,
+  password: process.env.DB_INSTANCIAS_PASSWORD,
+  database: process.env.DB_INSTANCIAS_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+});
+
+// Verificar conexiones
 async function initDatabase() {
-  const connection = await pool.getConnection();
-  
   try {
-    // Tabla de instancias de WhatsApp Business (Meta API)
-    await connection.query(`
-      CREATE TABLE IF NOT EXISTS whatsapp_instancias (
-        id INT(11) NOT NULL AUTO_INCREMENT,
-        negocio_id INT(11) NOT NULL,
-        waba_id VARCHAR(50) NOT NULL,
-        phone_number_id VARCHAR(50) NOT NULL,
-        business_account_id VARCHAR(50) NULL DEFAULT NULL,
-        access_token TEXT NOT NULL,
-        token_expira_en DATETIME NULL DEFAULT NULL,
-        display_phone_number VARCHAR(30) NOT NULL,
-        phone_number VARCHAR(20) NOT NULL,
-        verified_name VARCHAR(255) NULL DEFAULT NULL,
-        quality_rating VARCHAR(20) NULL DEFAULT NULL,
-        waba_name VARCHAR(255) NULL DEFAULT NULL,
-        estado ENUM('activo','inactivo','suspendido','desvinculado') NULL DEFAULT 'activo',
-        webhook_verificado TINYINT(1) NULL DEFAULT 0,
-        fecha_creacion DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
-        fecha_actualizacion DATETIME NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        fecha_desvinculacion DATETIME NULL DEFAULT NULL,
-        PRIMARY KEY (id),
-        UNIQUE INDEX uk_negocio (negocio_id),
-        UNIQUE INDEX uk_phone_number_id (phone_number_id)
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-    `);
+    // Verificar conexion local (message_logs)
+    const conn1 = await pool.getConnection();
+    conn1.release();
+    console.log('Database connection (message_logs): OK');
 
-    // Tabla de logs de mensajes enviados
-    await connection.query(`
-      CREATE TABLE IF NOT EXISTS message_logs (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        phone_number_id VARCHAR(50) NOT NULL,
-        to_number VARCHAR(50) NOT NULL,
-        message_type VARCHAR(50) DEFAULT 'text',
-        message_id VARCHAR(255),
-        status VARCHAR(50) DEFAULT 'sent',
-        request_payload JSON,
-        response_payload JSON,
-        error TEXT,
-        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        INDEX idx_phone_number_id (phone_number_id),
-        INDEX idx_timestamp (timestamp),
-        INDEX idx_message_id (message_id)
-      )
-    `);
+    // Verificar conexion externa (whatsapp_instancias)
+    const conn2 = await poolInstancias.getConnection();
+    conn2.release();
+    console.log('Database connection (whatsapp_instancias): OK');
 
-    console.log('Database initialized');
-    console.log('Tables: whatsapp_instancias, message_logs');
-    
   } catch (error) {
-    console.error('❌ Error initializing database:', error);
+    console.error('Error connecting to database:', error);
     throw error;
-  } finally {
-    connection.release();
   }
 }
 
-module.exports = { pool, initDatabase };
+module.exports = { pool, poolInstancias, initDatabase };
